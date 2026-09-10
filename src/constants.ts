@@ -2,7 +2,7 @@
 export const GEOFENCE_TASK = "wake-me-there-arrival-geofence";
 
 /** Android notification channel used for the strong arrival alert. */
-export const ARRIVAL_CHANNEL_ID = "arrival-alerts";
+export const ARRIVAL_CHANNEL_ID = "arrival-alerts-v2";
 
 /** Notification category that carries the "Stop alerts" action. */
 export const ARRIVAL_CATEGORY_ID = "arrival";

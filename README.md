@@ -60,6 +60,18 @@ flowchart TD
 - Xcode (iOS) and/or Android Studio + SDK for local native builds.
 - An Android **Google Maps API key** (iOS uses Apple Maps, no key needed).
 
+## Quick steps
+1. Use node 24
+2. hardcode the EAS project ID
+3. 
+```bash
+npm install
+npx eas-cli secret:create --name GOOGLE_MAPS_API_KEY --value "<key>"
+npx eas-cli build --profile development --platform android
+npm start
+```
+4. Then open the installed app and connect to the server.
+
 ## Setup
 
 ```bash

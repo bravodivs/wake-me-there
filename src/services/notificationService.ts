@@ -47,7 +47,7 @@ export async function setupNotifications(): Promise<void> {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: ANDROID_VIBRATION_PATTERN,
       enableVibrate: true,
-      sound: "default",
+      sound: "arrival_alert.wav",
       bypassDnd: false,
       lockscreenVisibility:
         Notifications.AndroidNotificationVisibility.PUBLIC,
@@ -61,7 +61,7 @@ function buildContent(trip: Trip, index: number): Notifications.NotificationCont
     title,
     body: `You are near ${trip.label}. Time to get ready to stop.`,
     categoryIdentifier: ARRIVAL_CATEGORY_ID,
-    sound: "default",
+    sound: "arrival_alert.wav",
     // iOS: elevate above normal notifications (does not bypass silent mode).
     interruptionLevel: "timeSensitive",
     // Android: route through the high-importance vibrating channel.
