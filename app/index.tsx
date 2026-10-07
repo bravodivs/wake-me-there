@@ -11,7 +11,12 @@ import {
   TextInput,
   View,
 } from "react-native";
-import MapView, { Circle, MapPressEvent, Marker, Region } from "react-native-maps";
+import MapView, {
+  Circle,
+  MapPressEvent,
+  Marker,
+  Region,
+} from "react-native-maps";
 import * as Location from "expo-location";
 import { useFocusEffect, useRouter } from "expo-router";
 import { Coordinate, PermissionSnapshot, Trip } from "../src/types";
@@ -31,6 +36,7 @@ import {
 } from "../src/services/permissionsService";
 import { startTripMonitoring } from "../src/services/geofenceService";
 import { getActiveTrip } from "../src/storage/tripStore";
+import { parseCoordinateInput } from "../src/utils/geo";
 
 const DEFAULT_REGION: Region = {
   latitude: 28.6139,
@@ -154,6 +160,13 @@ export default function DestinationScreen() {
     if (!query) {
       return;
     }
+    const typed = parseCoordinateInput(query);
+    if (typed) {
+      setLabel(formatCoordinate(typed));
+      setDestination(typed);
+      moveTo(typed);
+      return;
+    }
     setGeocoding(true);
     try {
       const results = await Location.geocodeAsync(query);
@@ -190,14 +203,20 @@ export default function DestinationScreen() {
       setPermissions(snapshot);
     }
     if (!snapshot.foregroundGranted) {
-      Alert.alert("Location needed", "Allow location access to center the map.");
+      Alert.alert(
+        "Location needed",
+        "Allow location access to center the map.",
+      );
       return;
     }
     try {
       const pos = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.Balanced,
       });
-      moveTo({ latitude: pos.coords.latitude, longitude: pos.coords.longitude });
+      moveTo({
+        latitude: pos.coords.latitude,
+        longitude: pos.coords.longitude,
+      });
     } catch {
       Alert.alert("Unavailable", "Could not read your current location.");
     }
@@ -239,7 +258,7 @@ export default function DestinationScreen() {
     if (!bg) {
       Alert.alert(
         "Always allow needed",
-        "Set location to \"Allow all the time\" so arrival works while the app is closed.",
+        'Set location to "Allow all the time" so arrival works while the app is closed.',
         [
           { text: "Cancel", style: "cancel" },
           { text: "Open Settings", onPress: openSettings },
@@ -252,7 +271,10 @@ export default function DestinationScreen() {
 
   const onStart = useCallback(async () => {
     if (!destination) {
-      Alert.alert("Pick a destination", "Search or tap the map to set where you're going.");
+      Alert.alert(
+        "Pick a destination",
+        "Enter coordinates, search or tap the map to set where you're going.",
+      );
       return;
     }
     const radius = validateRadius(radiusMeters);
@@ -285,7 +307,10 @@ export default function DestinationScreen() {
       if (health === "monitoring") {
         router.replace("/trip");
       } else if (health === "location-services-off") {
-        Alert.alert("Turn on location", "Enable device location services to start.");
+        Alert.alert(
+          "Turn on location",
+          "Enable device location services to start.",
+        );
       } else {
         Alert.alert(
           "Permissions needed",
@@ -314,7 +339,7 @@ export default function DestinationScreen() {
       <View style={styles.searchRow}>
         <TextInput
           style={styles.input}
-          placeholder="Search address or place"
+          placeholder="Search address or place or type coordinates"
           placeholderTextColor="#64748B"
           value={search}
           onChangeText={setSearch}
@@ -400,7 +425,10 @@ export default function DestinationScreen() {
         keyboardType="number-pad"
       />
 
-      <PermissionStatus permissions={permissions} onFix={requestAllPermissions} />
+      <PermissionStatus
+        permissions={permissions}
+        onFix={requestAllPermissions}
+      />
 
       <Pressable
         style={[styles.primaryButton, starting && styles.buttonDisabled]}

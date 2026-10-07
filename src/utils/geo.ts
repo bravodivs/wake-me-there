@@ -38,6 +38,23 @@ export function isValidCoordinate(value: unknown): value is Coordinate {
     longitude <= 180
   );
 }
+/**
+ * Accepts "lat, lng", or "lat;lng"
+ * Returns null when the text is not a coordinate pair
+ */
+export function parseCoordinateInput(text: string): Coordinate | null {
+  const match = text
+    .trim()
+    .match(/^(-?\d+(?:\.\d+)?)\s*[,;\s]\s*(-?\d+(?:\.\d+)?)$/);
+  if (!match) {
+    return null;
+  }
+  const coordinate = {
+    latitude: Number(match[1]),
+    longitude: Number(match[2]),
+  };
+  return isValidCoordinate(coordinate) ? coordinate : null;
+}
 
 export type RadiusValidation =
   | { ok: true; radiusMeters: number }
