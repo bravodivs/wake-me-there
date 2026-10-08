@@ -67,7 +67,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       "expo-notifications",
       {
         color: "#FF3B30",
-        sounds: ["./assets/sounds/arrival_alert.wav"],
+        sounds: ["./assets/arrival_alert.wav"],
       },
     ],
   ],
